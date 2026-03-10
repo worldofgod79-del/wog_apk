@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  http: ^1.1.0
+  xml: ^6.5.0
 
 dev_dependencies:
   flutter_test:
@@ -19,9 +19,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
   assets:
-    - assets/bible.json
+    - assets/bible.xml
     - assets/fonts/
+
   fonts:
     - family: Mallanna
       fonts:
