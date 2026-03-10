@@ -19,11 +19,7 @@ class WogApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0D47A1)),
-        // Fixed Global Fonts
-        textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme).copyWith(
-          bodyLarge: GoogleFonts.mallanna(fontSize: 20),
-          bodyMedium: GoogleFonts.mallanna(fontSize: 18),
-        ),
+        // Web building error rakunda font loading style marchanu
       ),
       home: const SplashScreen(),
     );
@@ -41,7 +37,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainHomePage()));
+      if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainHomePage()));
     });
   }
   @override
@@ -69,8 +65,6 @@ class MainHomePage extends StatefulWidget {
 }
 
 class _MainHomePageState extends State<MainHomePage> {
-  int _selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,7 +97,6 @@ class _MainHomePageState extends State<MainHomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // POLISHED BANNER
             Container(
               height: 200,
               width: double.infinity,
@@ -119,7 +112,6 @@ class _MainHomePageState extends State<MainHomePage> {
                   textAlign: TextAlign.center),
               ),
             ),
-            // MENU GRID
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: GridView.count(
@@ -171,8 +163,6 @@ class _MainHomePageState extends State<MainHomePage> {
     );
   }
 }
-// --- BIBLE LOGIC SCREENS ---
-
 class BibleListScreen extends StatefulWidget {
   const BibleListScreen({super.key});
   @override
@@ -187,9 +177,11 @@ class _BibleListScreenState extends State<BibleListScreen> {
     loadBible();
   }
   Future<void> loadBible() async {
-    final String res = await rootBundle.loadString('assets/bible.json');
-    final data = json.decode(res);
-    setState(() => _books = data["books"]);
+    try {
+      final String res = await rootBundle.loadString('assets/bible.json');
+      final data = json.decode(res);
+      setState(() => _books = data["books"]);
+    } catch (e) { print(e); }
   }
   @override
   Widget build(BuildContext context) {
@@ -199,11 +191,11 @@ class _BibleListScreenState extends State<BibleListScreen> {
         backgroundColor: const Color(0xFF0D47A1),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: ListView.builder(
+      body: _books.isEmpty ? const Center(child: CircularProgressIndicator()) : ListView.builder(
         itemCount: _books.length,
         itemBuilder: (context, i) => ListTile(
           leading: const Icon(Icons.book, color: Color(0xFFFF9800)),
-          title: Text(_books[i]["name"], style: GoogleFonts.mallanna(fontSize: 24, fontWeight: FontWeight.w500)),
+          title: Text(_books[i]["name"], style: GoogleFonts.mallanna(fontSize: 24)),
           trailing: const Icon(Icons.chevron_right),
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => 
             ChapterScreen(bookName: _books[i]["name"], chapters: _books[i]["chapters"]))),
