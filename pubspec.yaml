@@ -1,5 +1,5 @@
-name: wog_app
-description: A new Flutter project.
+name: wog_apk
+description: World of God Official App
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -10,6 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  # External Packages
+  http: ^1.1.0
+  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -18,3 +21,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # Assets register cheyadam marchipovaddu
+  assets:
+    - assets/bible.json
