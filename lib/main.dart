@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter/services.dart' show rootBundle;
-import 'package:xml/xml.dart' as xml;
+import 'bible_page.dart'; // Separate file connection
 
-void main() {
-  runApp(const WogApp());
-}
+void main() => runApp(const WogApp());
 
 class WogApp extends StatelessWidget {
   const WogApp({super.key});
@@ -18,7 +15,39 @@ class WogApp extends StatelessWidget {
         fontFamily: 'Poppins',
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1A237E)),
       ),
-      home: const MainHomePage(),
+      home: const SplashScreen(), // Splash Screen malli add chesanu
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Timer(const Duration(seconds: 3), () {
+      if (mounted) Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainHomePage()));
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.auto_awesome_rounded, size: 90, color: Color(0xFF1A237E)),
+            SizedBox(height: 20),
+            Text("WOG APP", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: Color(0xFF1A237E), letterSpacing: 1.5)),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -34,23 +63,21 @@ class _MainHomePageState extends State<MainHomePage> {
 
   final List<Widget> _screens = [
     const HomeScreenContent(),
-    const BibleStudyPage(),
-    const PlaceholderScreen(title: "Songs"),
-    const PlaceholderScreen(title: "Books"),
-    const PlaceholderScreen(title: "Live Stream"),
+    const BibleStudyPage(), // Ikkada mee bible_page.dart load avthundi
+    const Center(child: Text("Songs Section")),
+    const Center(child: Text("Books Section")),
+    const Center(child: Text("Live Section")),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF0F2F8),
       appBar: AppBar(
         title: const Text("WOG APP", style: TextStyle(fontWeight: FontWeight.w800, color: Colors.white)),
         backgroundColor: const Color(0xFF1A237E),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      drawer: _buildDrawer(),
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
@@ -79,36 +106,6 @@ class _MainHomePageState extends State<MainHomePage> {
       ),
     );
   }
-
-  Widget _buildDrawer() {
-    return Drawer(
-      child: Column(
-        children: [
-          const UserAccountsDrawerHeader(
-            decoration: BoxDecoration(color: Color(0xFF1A237E)),
-            accountName: Text("World of God", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-            accountEmail: Text("v1.0 - Official App"),
-            currentAccountPicture: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.church, color: Color(0xFF1A237E), size: 40)),
-          ),
-          _drawerTile(Icons.history_edu_rounded, "Tracker"),
-          _drawerTile(Icons.headset_rounded, "Audio Messages"),
-          _drawerTile(Icons.emoji_events_rounded, "Bible Quiz"),
-          const Spacer(),
-          const Divider(),
-          _drawerTile(Icons.info_outline_rounded, "About Us"),
-          const SizedBox(height: 10),
-        ],
-      ),
-    );
-  }
-
-  Widget _drawerTile(IconData icon, String title) {
-    return ListTile(
-      leading: Icon(icon, color: const Color(0xFF1A237E)),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-      onTap: () => Navigator.pop(context),
-    );
-  }
 }
 
 class HomeScreenContent extends StatelessWidget {
@@ -117,39 +114,21 @@ class HomeScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 160, width: double.infinity, margin: const EdgeInsets.all(20),
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(30), gradient: const LinearGradient(colors: [Color(0xFF1A237E), Color(0xFF3F51B5)])),
             child: const Center(child: Text("దేవుని వాక్యం జీవమున్నది", style: TextStyle(fontFamily: 'Mallanna', color: Colors.white, fontSize: 34, fontWeight: FontWeight.bold))),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-            child: Text("Daily Notifications", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Color(0xFF1A237E))),
-          ),
-          _notifCard(Icons.bolt_rounded, "Today's Verse", "The Lord is my Shepherd, I shall not want.", Colors.orange),
-          _notifCard(Icons.notifications_active_rounded, "Latest Update", "Sunday Service starts at 10 AM.", Colors.redAccent),
+          // Add your Notifications here
         ],
       ),
     );
   }
-
-  Widget _notifCard(IconData icon, String title, String msg, Color col) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-      child: Row(children: [
-        Icon(icon, color: col), const SizedBox(width: 15),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(msg, style: const TextStyle(fontSize: 13, color: Colors.black54)),
-        ]))
-      ]),
-    );
-  }
 }
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:xml/xml.dart' as xml;
 
 class BibleStudyPage extends StatefulWidget {
   const BibleStudyPage({super.key});
@@ -184,6 +163,7 @@ class _BibleStudyPageState extends State<BibleStudyPage> {
         isLoading = false;
       });
     } catch (e) {
+      print("Error: $e");
       setState(() => isLoading = false);
     }
   }
@@ -200,68 +180,72 @@ class _BibleStudyPageState extends State<BibleStudyPage> {
 
   void _loadVerses() {
     if (selectedChapter != null) {
-      setState(() {
-        verses = selectedChapter!.findElements('VERS').toList();
-      });
+      setState(() => verses = selectedChapter!.findElements('VERS').toList());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (isLoading) return const Center(child: CircularProgressIndicator());
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          color: Colors.white,
-          child: Row(
-            children: [
-              Expanded(
-                flex: 2,
-                child: DropdownButton<xml.XmlElement>(
-                  isExpanded: true,
-                  value: selectedBook,
-                  items: books.map((b) => DropdownMenuItem(value: b, child: Text(b.getAttribute('bname') ?? '', style: const TextStyle(fontFamily: 'Mallanna', fontSize: 18)))).toList(),
-                  onChanged: (val) { setState(() { selectedBook = val; _loadChapters(); }); },
-                ),
-              ),
-              const SizedBox(width: 10),
-              DropdownButton<xml.XmlElement>(
-                value: selectedChapter,
-                items: chapters.map((c) => DropdownMenuItem(value: c, child: Text("Ch ${c.getAttribute('cnumber')}"))).toList(),
-                onChanged: (val) { setState(() { selectedChapter = val; _loadVerses(); }); },
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(20),
-            itemCount: verses.length,
-            itemBuilder: (context, index) {
-              var v = verses[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 15),
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(text: "${v.getAttribute('vnumber')}. ", style: const TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold, fontSize: 16)),
-                      TextSpan(text: v.innerText, style: const TextStyle(fontFamily: 'Mallanna', color: Colors.black87, fontSize: 22, height: 1.6)),
-                    ],
+    return Scaffold(
+      backgroundColor: const Color(0xFFF0F2F8),
+      body: Column(
+        children: [
+          // Selectors
+          Container(
+            padding: const EdgeInsets.all(12),
+            color: Colors.white,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<xml.XmlElement>(
+                      isExpanded: true,
+                      value: selectedBook,
+                      items: books.map((b) => DropdownMenuItem(value: b, child: Text(b.getAttribute('bname') ?? '', style: const TextStyle(fontFamily: 'Mallanna', fontSize: 18)))).toList(),
+                      onChanged: (val) { setState(() { selectedBook = val; _loadChapters(); }); },
+                    ),
                   ),
                 ),
-              );
-            },
+                const SizedBox(width: 10),
+                DropdownButton<xml.XmlElement>(
+                  value: selectedChapter,
+                  items: chapters.map((c) => DropdownMenuItem(value: c, child: Text("Ch ${c.getAttribute('cnumber')}"))).toList(),
+                  onChanged: (val) { setState(() { selectedChapter = val; _loadVerses(); }); },
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          // Verse List
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: verses.length,
+              itemBuilder: (context, index) {
+                var v = verses[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 15),
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(text: "${v.getAttribute('vnumber')}. ", style: const TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold, fontSize: 16)),
+                        TextSpan(text: v.innerText, style: const TextStyle(fontFamily: 'Mallanna', color: Colors.black87, fontSize: 22, height: 1.6)),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+      // Search Button (Meeru pampina Search Delegate logic ikkada connect cheyochu)
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF1A237E),
+        onPressed: () {}, // Meeru pampina Search functionality ni ikkada pettandi
+        child: const Icon(Icons.search, color: Colors.white),
+      ),
     );
   }
-}
-
-class PlaceholderScreen extends StatelessWidget {
-  final String title;
-  const PlaceholderScreen({super.key, required this.title});
-  @override
-  Widget build(BuildContext context) => Center(child: Text("$title Coming Soon", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)));
 }
