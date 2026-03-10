@@ -10,9 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  # External Packages
   http: ^1.1.0
-  google_fonts: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -22,6 +20,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # Assets register cheyadam marchipovaddu
+  # Assets path correct ga undali
   assets:
     - assets/bible.json
+    - assets/fonts/
+
+  # Local Fonts Registering
+  fonts:
+    - family: Mallanna
+      fonts:
+        - asset: assets/fonts/Mallanna-Regular.ttf
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
