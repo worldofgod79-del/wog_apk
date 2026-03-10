@@ -13,7 +13,11 @@ class WogApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: true),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: true,
+        scaffoldBackgroundColor: Colors.grey[100],
+      ),
       home: const SplashScreen(),
     );
   }
@@ -44,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
           children: [
             Icon(Icons.auto_awesome, size: 100, color: Colors.blue),
             SizedBox(height: 20),
-            Text("WOG APP", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+            Text("WOG APP", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.blue)),
           ],
         ),
       ),
@@ -52,89 +56,128 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// 2. REAL HOME PAGE (As per your structure)
-class MainHomePage extends StatelessWidget {
+// 2. MAIN HOME PAGE
+class MainHomePage extends StatefulWidget {
   const MainHomePage({super.key});
+  @override
+  State<MainHomePage> createState() => _MainHomePageState();
+}
+
+class _MainHomePageState extends State<MainHomePage> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("WOG HOME"), centerTitle: true),
-      drawer: _buildDrawer(context),
-      body: SingleChildScrollView(
+      appBar: AppBar(
+        title: const Text("WOG APP", style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.blue),
+      ),
+      // SIDE MENU (IMAGE LO UNNATTE)
+      drawer: Drawer(
         child: Column(
           children: [
-            // TOP BANNER
-            Container(
-              margin: const EdgeInsets.all(15),
-              height: 200,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.blue[100],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: const Center(child: Text("BANNER / IMAGE SLIDER")),
+            UserAccountsDrawerHeader(
+              decoration: BoxDecoration(color: Colors.blue[800]),
+              accountName: const Text("World of God", style: TextStyle(fontSize: 20)),
+              accountEmail: const Text("wogapp@official.com"),
+              currentAccountPicture: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.person, size: 50)),
             ),
-            
-            const Padding(
-              padding: EdgeInsets.all(10),
-              child: Text("CHOOSE A SECTION", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
-
-            // GRID MENU (4 Main Buttons)
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              padding: const EdgeInsets.all(15),
-              mainAxisSpacing: 15,
-              crossAxisSpacing: 15,
-              children: [
-                _homeButton(context, "BIBLE", Icons.menu_book, Colors.orange, const BibleListScreen()),
-                _homeButton(context, "SONGS", Icons.music_note, Colors.blue, const PlaceholderScreen(title: "Songs")),
-                _homeButton(context, "BOOKS", Icons.library_books, Colors.green, const PlaceholderScreen(title: "Books")),
-                _homeButton(context, "LIVE", Icons.live_tv, Colors.red, const PlaceholderScreen(title: "Live Stream")),
-              ],
-            ),
+            _drawerItem(Icons.track_changes, "TRACKER"),
+            _drawerItem(Icons.audiotrack, "AUDIO MESSAGES"),
+            _drawerItem(Icons.quiz, "QUIZ"),
+            const Divider(),
+            _drawerItem(Icons.contact_mail, "CONTACT US"),
+            _drawerItem(Icons.info, "ABOUT US"),
+            _drawerItem(Icons.share, "SHARE THIS APP"),
           ],
         ),
+      ),
+      body: _buildHomeBody(),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue[800],
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        onTap: (i) => setState(() => _selectedIndex = i),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'HOME'),
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'BIBLE'),
+          BottomNavigationBarItem(icon: Icon(Icons.music_note), label: 'SONGS'),
+          BottomNavigationBarItem(icon: Icon(Icons.live_tv), label: 'LIVE'),
+        ],
       ),
     );
   }
 
-  Widget _homeButton(BuildContext context, String label, IconData icon, Color color, Widget nextScreen) {
+  Widget _buildHomeBody() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // BANNER AREA
+          Container(
+            height: 180,
+            width: double.infinity,
+            margin: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [Colors.blue[700]!, Colors.blue[400]!]),
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [BoxShadow(color: Colors.blue.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
+            ),
+            child: const Center(child: Text("WELCOME TO WOG", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold))),
+          ),
+          
+          // GRID MENU (4 BUTTONS)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15,
+              children: [
+                _menuCard("BIBLE", Icons.menu_book, Colors.orange, const BibleListScreen()),
+                _menuCard("SONGS", Icons.music_note, Colors.blue, const CommonPlaceholder(title: "Songs")),
+                _menuCard("BOOKS", Icons.library_books, Colors.green, const CommonPlaceholder(title: "Books")),
+                _menuCard("LIVE", Icons.live_tv, Colors.red, const CommonPlaceholder(title: "Live Stream")),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _menuCard(String title, IconData icon, Color color, Widget screen) {
     return InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => nextScreen)),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
       child: Container(
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: color, width: 2),
+          boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10)],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 50, color: color),
+            CircleAvatar(radius: 30, backgroundColor: color.withOpacity(0.1), child: Icon(icon, color: color, size: 30)),
             const SizedBox(height: 10),
-            Text(label, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: color)),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDrawer(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        children: [
-          const DrawerHeader(decoration: BoxDecoration(color: Colors.blue), child: Text("WOG MENU", style: TextStyle(color: Colors.white, fontSize: 24))),
-          ListTile(leading: const Icon(Icons.track_changes), title: const Text("TRACKER"), onTap: () {}),
-          ListTile(leading: const Icon(Icons.audiotrack), title: const Text("AUDIO MESSAGES"), onTap: () {}),
-          ListTile(leading: const Icon(Icons.quiz), title: const Text("QUIZ"), onTap: () {}),
-          const Divider(),
-          ListTile(leading: const Icon(Icons.info), title: const Text("ABOUT US"), onTap: () {}),
-        ],
-      ),
+  Widget _drawerItem(IconData icon, String title) {
+    return ListTile(
+      leading: Icon(icon, color: Colors.blue[800]),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+      onTap: () => Navigator.pop(context),
     );
   }
 }
@@ -147,46 +190,39 @@ class BibleListScreen extends StatefulWidget {
 }
 
 class _BibleListScreenState extends State<BibleListScreen> {
-  List _bibleBooks = [];
-
+  List _books = [];
   @override
   void initState() {
     super.initState();
     loadBible();
   }
-
   Future<void> loadBible() async {
-    final String response = await rootBundle.loadString('assets/bible.json');
-    final data = await json.decode(response);
-    setState(() { _bibleBooks = data["books"]; });
+    final String res = await rootBundle.loadString('assets/bible.json');
+    final data = json.decode(res);
+    setState(() => _books = data["books"]);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("HOLY BIBLE")),
-      body: _bibleBooks.isEmpty 
-        ? const Center(child: CircularProgressIndicator())
-        : ListView.builder(
-            itemCount: _bibleBooks.length,
-            itemBuilder: (context, i) => ListTile(
-              title: Text(_bibleBooks[i]["name"]),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => 
-                ChapterScreen(bookName: _bibleBooks[i]["name"], chapters: _bibleBooks[i]["chapters"]))),
-            ),
-          ),
+      body: ListView.builder(
+        itemCount: _books.length,
+        itemBuilder: (context, i) => ListTile(
+          leading: const Icon(Icons.book_online, color: Colors.orange),
+          title: Text(_books[i]["name"]),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => 
+            ChapterScreen(bookName: _books[i]["name"], chapters: _books[i]["chapters"]))),
+        ),
+      ),
     );
   }
 }
 
-// (ChapterScreen and VerseScreen logic ikkade untundi - code length limit valla kindha extend chesthunna...)
-
+// 4. CHAPTERS & VERSES (Previous Logic kept same)
 class ChapterScreen extends StatelessWidget {
   final String bookName;
   final List chapters;
   const ChapterScreen({super.key, required this.bookName, required this.chapters});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -209,7 +245,6 @@ class VerseScreen extends StatelessWidget {
   final int chapterNum;
   final List verses;
   const VerseScreen({super.key, required this.chapterNum, required this.verses});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -217,7 +252,7 @@ class VerseScreen extends StatelessWidget {
       body: ListView.builder(
         itemCount: verses.length,
         itemBuilder: (context, i) => ListTile(
-          leading: Text("${verses[i]["number"]}.", style: const TextStyle(fontWeight: FontWeight.bold)),
+          leading: Text("${verses[i]["number"]}.", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
           title: Text(verses[i]["text"]),
         ),
       ),
@@ -225,11 +260,11 @@ class VerseScreen extends StatelessWidget {
   }
 }
 
-class PlaceholderScreen extends StatelessWidget {
+class CommonPlaceholder extends StatelessWidget {
   final String title;
-  const PlaceholderScreen({super.key, required this.title});
+  const CommonPlaceholder({super.key, required this.title});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text(title)), body: Center(child: Text("$title Screen Coming Soon")));
+    return Scaffold(appBar: AppBar(title: Text(title)), body: Center(child: Text("$title Section Under Construction")));
   }
 }
