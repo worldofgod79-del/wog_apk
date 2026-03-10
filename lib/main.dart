@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const WogApp());
@@ -13,17 +15,21 @@ class WogApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'WOG APK',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF5F7FA),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0D47A1)),
+        // Fixed Global Fonts
+        textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme).copyWith(
+          bodyLarge: GoogleFonts.mallanna(fontSize: 20),
+          bodyMedium: GoogleFonts.mallanna(fontSize: 18),
+        ),
       ),
       home: const SplashScreen(),
     );
   }
 }
 
-// 1. SPLASH SCREEN
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
   @override
@@ -46,16 +52,9 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.auto_awesome, size: 80, color: Colors.blue),
-            ),
-            const SizedBox(height: 24),
-            const Text("WOG APP", style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 2, color: Color(0xFF1A237E))),
+            const Icon(Icons.auto_awesome, size: 100, color: Color(0xFF0D47A1)),
+            const SizedBox(height: 20),
+            Text("WOG APP", style: GoogleFonts.roboto(fontSize: 30, fontWeight: FontWeight.bold, color: const Color(0xFF0D47A1))),
           ],
         ),
       ),
@@ -63,7 +62,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-// 2. MAIN HOME PAGE
 class MainHomePage extends StatefulWidget {
   const MainHomePage({super.key});
   @override
@@ -77,85 +75,69 @@ class _MainHomePageState extends State<MainHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("WOG APP", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: Text("WOG APP", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: const Color(0xFF0D47A1),
-        elevation: 5,
+        centerTitle: true,
+        elevation: 4,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      // SIDE MENU (EXACTLY AS PER YOUR IMAGE)
       drawer: Drawer(
         child: Column(
           children: [
-            const UserAccountsDrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFF1565C0)),
-              accountName: Text("World of God", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              accountEmail: Text("Contact: wogapp@official.com"),
-              currentAccountPicture: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.church, color: Color(0xFF1565C0), size: 40)),
+            UserAccountsDrawerHeader(
+              decoration: const BoxDecoration(color: Color(0xFF0D47A1)),
+              accountName: Text("World of God", style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold)),
+              accountEmail: const Text("wogapp@official.com"),
+              currentAccountPicture: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.church, color: Color(0xFF0D47A1), size: 40)),
             ),
-            _drawerItem(Icons.track_changes, "TRACKER"),
-            _drawerItem(Icons.audiotrack, "AUDIO MESSAGES"),
-            _drawerItem(Icons.quiz, "QUIZ"),
-            const Divider(thickness: 1),
-            _drawerItem(Icons.contact_mail, "CONTACT US"),
-            _drawerItem(Icons.info_outline, "ABOUT US"),
-            _drawerItem(Icons.share, "SHARE THIS APP"),
+            _drawerTile(Icons.track_changes, "TRACKER"),
+            _drawerTile(Icons.audiotrack, "AUDIO MESSAGES"),
+            _drawerTile(Icons.quiz, "QUIZ"),
+            const Divider(),
+            _drawerTile(Icons.contact_mail, "CONTACT US"),
+            _drawerTile(Icons.info, "ABOUT US"),
+            _drawerTile(Icons.share, "SHARE THIS APP"),
           ],
         ),
       ),
-      body: _buildHomeBody(),
-    );
-  }
-
-  Widget _buildHomeBody() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // PRO BANNER AREA
-          Container(
-            height: 200,
-            width: double.infinity,
-            margin: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: const LinearGradient(colors: [Color(0xFF1976D2), Color(0xFF64B5F6)]),
-              boxShadow: [BoxShadow(color: Colors.blue.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // POLISHED BANNER
+            Container(
+              height: 200,
+              width: double.infinity,
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: const LinearGradient(colors: [Color(0xFF0D47A1), Color(0xFF42A5F5)]),
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 5))],
+              ),
+              child: Center(
+                child: Text("దేవుని వాక్యం జీవమున్నది", 
+                  style: GoogleFonts.mallanna(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center),
+              ),
             ),
-            child: const Stack(
-              children: [
-                Positioned(
-                  bottom: 20, left: 20,
-                  child: Text("Today's Verse\nGod is Love", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
-                ),
-                Positioned(top: 20, right: 20, child: Icon(Icons.format_quote, color: Colors.white54, size: 50)),
-              ],
+            // MENU GRID
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: GridView.count(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                crossAxisCount: 2,
+                crossAxisSpacing: 15,
+                mainAxisSpacing: 15,
+                children: [
+                  _menuCard("BIBLE", Icons.menu_book, const Color(0xFFFF9800), const BibleListScreen()),
+                  _menuCard("SONGS", Icons.music_note, const Color(0xFF2196F3), const PlaceholderScreen(title: "Songs")),
+                  _menuCard("BOOKS", Icons.library_books, const Color(0xFF4CAF50), const PlaceholderScreen(title: "Books")),
+                  _menuCard("LIVE", Icons.live_tv, const Color(0xFFF44336), const PlaceholderScreen(title: "Live Stream")),
+                ],
+              ),
             ),
-          ),
-          
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Text("Main Menu", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF333333))),
-          ),
-
-          // GRID MENU (4 MAIN CARDS)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              children: [
-                _menuCard("BIBLE", Icons.menu_book_rounded, const Color(0xFFFF9800), const BibleListScreen()),
-                _menuCard("SONGS", Icons.music_video_rounded, const Color(0xFF2196F3), const CommonPlaceholder(title: "Songs")),
-                _menuCard("BOOKS", Icons.library_books_rounded, const Color(0xFF4CAF50), const CommonPlaceholder(title: "Books")),
-                _menuCard("LIVE", Icons.live_tv_rounded, const Color(0xFFF44336), const CommonPlaceholder(title: "Live Stream")),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -166,35 +148,31 @@ class _MainHomePageState extends State<MainHomePage> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 15, offset: const Offset(0, 5))],
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(color: color.withOpacity(0.1), shape: BoxShape.circle),
-              child: Icon(icon, color: color, size: 36),
-            ),
-            const SizedBox(height: 12),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF444444))),
+            Icon(icon, size: 50, color: color),
+            const SizedBox(height: 10),
+            Text(title, style: GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
     );
   }
 
-  Widget _drawerItem(IconData icon, String title) {
+  Widget _drawerTile(IconData icon, String title) {
     return ListTile(
-      leading: Icon(icon, color: const Color(0xFF1565C0)),
-      title: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+      leading: Icon(icon, color: const Color(0xFF0D47A1)),
+      title: Text(title, style: GoogleFonts.roboto(fontSize: 16)),
       onTap: () => Navigator.pop(context),
     );
   }
 }
+// --- BIBLE LOGIC SCREENS ---
 
-// 3. BIBLE LIST SCREEN (With Better List Design)
 class BibleListScreen extends StatefulWidget {
   const BibleListScreen({super.key});
   @override
@@ -217,18 +195,16 @@ class _BibleListScreenState extends State<BibleListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Holy Bible", style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF1565C0),
+        title: Text("Holy Bible", style: GoogleFonts.roboto(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFF0D47A1),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: ListView.separated(
+      body: ListView.builder(
         itemCount: _books.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
         itemBuilder: (context, i) => ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          leading: const CircleAvatar(backgroundColor: Color(0xFFFF9800), child: Icon(Icons.book, color: Colors.white, size: 20)),
-          title: Text(_books[i]["name"], style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-          trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+          leading: const Icon(Icons.book, color: Color(0xFFFF9800)),
+          title: Text(_books[i]["name"], style: GoogleFonts.mallanna(fontSize: 24, fontWeight: FontWeight.w500)),
+          trailing: const Icon(Icons.chevron_right),
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => 
             ChapterScreen(bookName: _books[i]["name"], chapters: _books[i]["chapters"]))),
         ),
@@ -237,25 +213,25 @@ class _BibleListScreenState extends State<BibleListScreen> {
   }
 }
 
-// 4. CHAPTERS & VERSES
 class ChapterScreen extends StatelessWidget {
   final String bookName;
   final List chapters;
   const ChapterScreen({super.key, required this.bookName, required this.chapters});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(bookName)),
+      appBar: AppBar(title: Text(bookName, style: GoogleFonts.mallanna(fontSize: 26, color: Colors.white)), backgroundColor: const Color(0xFF0D47A1), iconTheme: const IconThemeData(color: Colors.white)),
       body: GridView.builder(
-        padding: const EdgeInsets.all(20),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5, mainAxisSpacing: 15, crossAxisSpacing: 15),
+        padding: const EdgeInsets.all(15),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5, mainAxisSpacing: 10, crossAxisSpacing: 10),
         itemCount: chapters.length,
         itemBuilder: (context, i) => InkWell(
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => 
             VerseScreen(chapterNum: chapters[i]["chapter"], verses: chapters[i]["verses"]))),
           child: Container(
-            decoration: BoxDecoration(color: const Color(0xFFE3F2FD), borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.blue.shade200)),
-            child: Center(child: Text("${chapters[i]["chapter"]}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
+            decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.blue.shade200)),
+            child: Center(child: Text("${chapters[i]["chapter"]}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
           ),
         ),
       ),
@@ -267,21 +243,22 @@ class VerseScreen extends StatelessWidget {
   final int chapterNum;
   final List verses;
   const VerseScreen({super.key, required this.chapterNum, required this.verses});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chapter $chapterNum")),
+      appBar: AppBar(title: Text("Chapter $chapterNum", style: GoogleFonts.roboto())),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: verses.length,
         itemBuilder: (context, i) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.only(bottom: 15),
           child: RichText(
             text: TextSpan(
-              style: const TextStyle(color: Colors.black87, fontSize: 18, height: 1.5),
+              style: const TextStyle(color: Colors.black87, fontSize: 20, height: 1.6),
               children: [
-                TextSpan(text: "${verses[i]["number"]}. ", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
-                TextSpan(text: verses[i]["text"]),
+                TextSpan(text: "${verses[i]["number"]}. ", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, color: const Color(0xFF0D47A1), fontSize: 18)),
+                TextSpan(text: verses[i]["text"], style: GoogleFonts.mallanna()),
               ],
             ),
           ),
@@ -291,11 +268,11 @@ class VerseScreen extends StatelessWidget {
   }
 }
 
-class CommonPlaceholder extends StatelessWidget {
+class PlaceholderScreen extends StatelessWidget {
   final String title;
-  const CommonPlaceholder({super.key, required this.title});
+  const PlaceholderScreen({super.key, required this.title});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text(title)), body: Center(child: Text("$title Section Coming Soon", style: const TextStyle(fontSize: 18))));
+    return Scaffold(appBar: AppBar(title: Text(title)), body: Center(child: Text("$title Section Coming Soon", style: GoogleFonts.roboto(fontSize: 18))));
   }
 }
