@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const WogApp());
@@ -15,11 +13,11 @@ class WogApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'WOG APK',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0D47A1)),
-        // Web building error rakunda font loading style marchanu
+        // Global font Poppins ki marchanu
+        fontFamily: 'Poppins', 
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1A237E)),
       ),
       home: const SplashScreen(),
     );
@@ -42,15 +40,15 @@ class _SplashScreenState extends State<SplashScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.auto_awesome, size: 100, color: Color(0xFF0D47A1)),
-            const SizedBox(height: 20),
-            Text("WOG APP", style: GoogleFonts.roboto(fontSize: 30, fontWeight: FontWeight.bold, color: const Color(0xFF0D47A1))),
+            Icon(Icons.auto_awesome_rounded, size: 90, color: Color(0xFF1A237E)),
+            SizedBox(height: 20),
+            Text("WOG APP", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: Color(0xFF1A237E), letterSpacing: 1.5)),
           ],
         ),
       ),
@@ -58,108 +56,128 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 }
 
-class MainHomePage extends StatefulWidget {
+class MainHomePage extends StatelessWidget {
   const MainHomePage({super.key});
-  @override
-  State<MainHomePage> createState() => _MainHomePageState();
-}
 
-class _MainHomePageState extends State<MainHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FE), // Soft background
       appBar: AppBar(
-        title: Text("WOG APP", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, color: Colors.white)),
-        backgroundColor: const Color(0xFF0D47A1),
+        title: const Text("WOG APP", style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white)),
+        backgroundColor: const Color(0xFF1A237E),
         centerTitle: true,
-        elevation: 4,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      drawer: Drawer(
-        child: Column(
-          children: [
-            UserAccountsDrawerHeader(
-              decoration: const BoxDecoration(color: Color(0xFF0D47A1)),
-              accountName: Text("World of God", style: GoogleFonts.roboto(fontSize: 18, fontWeight: FontWeight.bold)),
-              accountEmail: const Text("wogapp@official.com"),
-              currentAccountPicture: const CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.church, color: Color(0xFF0D47A1), size: 40)),
-            ),
-            _drawerTile(Icons.track_changes, "TRACKER"),
-            _drawerTile(Icons.audiotrack, "AUDIO MESSAGES"),
-            _drawerTile(Icons.quiz, "QUIZ"),
-            const Divider(),
-            _drawerTile(Icons.contact_mail, "CONTACT US"),
-            _drawerTile(Icons.info, "ABOUT US"),
-            _drawerTile(Icons.share, "SHARE THIS APP"),
-          ],
-        ),
-      ),
+      drawer: _buildDrawer(context),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              height: 200,
-              width: double.infinity,
-              margin: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: const LinearGradient(colors: [Color(0xFF0D47A1), Color(0xFF42A5F5)]),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, offset: const Offset(0, 5))],
-              ),
-              child: Center(
-                child: Text("దేవుని వాక్యం జీవమున్నది", 
-                  style: GoogleFonts.mallanna(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center),
-              ),
+            _buildBanner(),
+            const Padding(
+              padding: EdgeInsets.only(left: 20, top: 10, bottom: 5),
+              child: Align(alignment: Alignment.centerLeft, child: Text("Main Menu", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600))),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 15,
-                children: [
-                  _menuCard("BIBLE", Icons.menu_book, const Color(0xFFFF9800), const BibleListScreen()),
-                  _menuCard("SONGS", Icons.music_note, const Color(0xFF2196F3), const PlaceholderScreen(title: "Songs")),
-                  _menuCard("BOOKS", Icons.library_books, const Color(0xFF4CAF50), const PlaceholderScreen(title: "Books")),
-                  _menuCard("LIVE", Icons.live_tv, const Color(0xFFF44336), const PlaceholderScreen(title: "Live Stream")),
-                ],
-              ),
-            ),
+            _buildGridMenu(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _menuCard(String title, IconData icon, Color color, Widget screen) {
+  Widget _buildBanner() {
+    return Container(
+      height: 190,
+      width: double.infinity,
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1A237E), Color(0xFF3949AB)],
+        ),
+        boxShadow: [BoxShadow(color: Colors.indigo.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8))],
+      ),
+      child: const Center(
+        child: Text("దేవుని వాక్యం జీవమున్నది", 
+          style: TextStyle(fontFamily: 'Mallanna', color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center),
+      ),
+    );
+  }
+
+  Widget _buildGridMenu(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        crossAxisSpacing: 18,
+        mainAxisSpacing: 18,
+        children: [
+          _menuCard(context, "BIBLE", Icons.menu_book_rounded, const Color(0xFFFF9100), const BibleListScreen()),
+          _menuCard(context, "SONGS", Icons.music_note_rounded, const Color(0xFF2979FF), const CommonPlaceholder(title: "Songs")),
+          _menuCard(context, "BOOKS", Icons.import_contacts_rounded, const Color(0xFF00C853), const CommonPlaceholder(title: "Books")),
+          _menuCard(context, "LIVE", Icons.sensors_rounded, const Color(0xFFFF1744), const CommonPlaceholder(title: "Live Stream")),
+        ],
+      ),
+    );
+  }
+
+  Widget _menuCard(BuildContext context, String title, IconData icon, Color color, Widget screen) {
     return InkWell(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 4))],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 50, color: color),
-            const SizedBox(height: 10),
-            Text(title, style: GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.bold)),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(color: color.withOpacity(0.12), shape: BoxShape.circle),
+              child: Icon(icon, color: color, size: 32),
+            ),
+            const SizedBox(height: 12),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, letterSpacing: 0.5)),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const UserAccountsDrawerHeader(
+            decoration: BoxDecoration(color: Color(0xFF1A237E)),
+            accountName: Text("World of God", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            accountEmail: Text("wogapp@official.com"),
+            currentAccountPicture: CircleAvatar(backgroundColor: Colors.white, child: Icon(Icons.church, color: Color(0xFF1A237E), size: 35)),
+          ),
+          _drawerTile(Icons.track_changes_rounded, "Tracker"),
+          _drawerTile(Icons.audio_file_rounded, "Audio Messages"),
+          _drawerTile(Icons.quiz_rounded, "Quiz"),
+          const Divider(indent: 20, endIndent: 20),
+          _drawerTile(Icons.contact_support_rounded, "Contact Us"),
+          _drawerTile(Icons.info_rounded, "About Us"),
+        ],
       ),
     );
   }
 
   Widget _drawerTile(IconData icon, String title) {
     return ListTile(
-      leading: Icon(icon, color: const Color(0xFF0D47A1)),
-      title: Text(title, style: GoogleFonts.roboto(fontSize: 16)),
-      onTap: () => Navigator.pop(context),
+      leading: Icon(icon, color: const Color(0xFF1A237E), size: 22),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15)),
+      onTap: () {},
     );
   }
 }
@@ -186,17 +204,14 @@ class _BibleListScreenState extends State<BibleListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Holy Bible", style: GoogleFonts.roboto(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFF0D47A1),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: _books.isEmpty ? const Center(child: CircularProgressIndicator()) : ListView.builder(
+      appBar: AppBar(title: const Text("Holy Bible"), backgroundColor: const Color(0xFF0D47A1), iconTheme: const IconThemeData(color: Colors.white)),
+      body: ListView.separated(
         itemCount: _books.length,
+        separatorBuilder: (c, i) => const Divider(height: 1),
         itemBuilder: (context, i) => ListTile(
-          leading: const Icon(Icons.book, color: Color(0xFFFF9800)),
-          title: Text(_books[i]["name"], style: GoogleFonts.mallanna(fontSize: 24)),
-          trailing: const Icon(Icons.chevron_right),
+          leading: const CircleAvatar(backgroundColor: Color(0xFFFF9800), child: Icon(Icons.book, color: Colors.white, size: 18)),
+          title: Text(_books[i]["name"], style: const TextStyle(fontFamily: 'Mallanna', fontSize: 24)),
+          trailing: const Icon(Icons.chevron_right, color: Colors.grey),
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => 
             ChapterScreen(bookName: _books[i]["name"], chapters: _books[i]["chapters"]))),
         ),
@@ -213,16 +228,16 @@ class ChapterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(bookName, style: GoogleFonts.mallanna(fontSize: 26, color: Colors.white)), backgroundColor: const Color(0xFF0D47A1), iconTheme: const IconThemeData(color: Colors.white)),
+      appBar: AppBar(title: Text(bookName, style: const TextStyle(fontFamily: 'Mallanna', fontSize: 26))),
       body: GridView.builder(
-        padding: const EdgeInsets.all(15),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5, mainAxisSpacing: 10, crossAxisSpacing: 10),
+        padding: const EdgeInsets.all(20),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5, mainAxisSpacing: 15, crossAxisSpacing: 15),
         itemCount: chapters.length,
         itemBuilder: (context, i) => InkWell(
           onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => 
             VerseScreen(chapterNum: chapters[i]["chapter"], verses: chapters[i]["verses"]))),
           child: Container(
-            decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.blue.shade200)),
+            decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.blue.shade100)),
             child: Center(child: Text("${chapters[i]["chapter"]}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
           ),
         ),
@@ -239,9 +254,9 @@ class VerseScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Chapter $chapterNum", style: GoogleFonts.roboto())),
+      appBar: AppBar(title: Text("Chapter $chapterNum")),
       body: ListView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         itemCount: verses.length,
         itemBuilder: (context, i) => Padding(
           padding: const EdgeInsets.only(bottom: 15),
@@ -249,8 +264,8 @@ class VerseScreen extends StatelessWidget {
             text: TextSpan(
               style: const TextStyle(color: Colors.black87, fontSize: 20, height: 1.6),
               children: [
-                TextSpan(text: "${verses[i]["number"]}. ", style: GoogleFonts.roboto(fontWeight: FontWeight.bold, color: const Color(0xFF0D47A1), fontSize: 18)),
-                TextSpan(text: verses[i]["text"], style: GoogleFonts.mallanna()),
+                TextSpan(text: "${verses[i]["number"]}. ", style: const TextStyle(fontFamily: 'Roboto', fontWeight: FontWeight.bold, color: Color(0xFF0D47A1), fontSize: 18)),
+                TextSpan(text: verses[i]["text"], style: const TextStyle(fontFamily: 'Mallanna')),
               ],
             ),
           ),
@@ -260,11 +275,11 @@ class VerseScreen extends StatelessWidget {
   }
 }
 
-class PlaceholderScreen extends StatelessWidget {
+class CommonPlaceholder extends StatelessWidget {
   final String title;
-  const PlaceholderScreen({super.key, required this.title});
+  const CommonPlaceholder({super.key, required this.title});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text(title)), body: Center(child: Text("$title Section Coming Soon", style: GoogleFonts.roboto(fontSize: 18))));
+    return Scaffold(appBar: AppBar(title: Text(title)), body: Center(child: Text("$title Section Coming Soon", style: const TextStyle(fontSize: 18))));
   }
 }
